@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Splash Screen</title>
+  <link rel="stylesheet" href="brand-colors.css">
+  <style>
+    .splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--color-bg, #0b0b0c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      transition: opacity 1.2s cubic-bezier(.4,0,.2,1);
+      opacity: 1;
+      pointer-events: auto;
+      overflow: hidden;
+    }
+    .splash-logo {
+      max-width: 85vw;
+      max-height: 45vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 0 32px 8px #d4af37cc) drop-shadow(0 0 24px 4px #1b6b4bcc);
+      background: transparent;
+      border-radius: 1.5vw;
+      box-sizing: border-box;
+    }
+    .splash--hide {
+      opacity: 0;
+      transition: opacity 0.9s cubic-bezier(.4,0,.2,1);
+    }
+    .splash[aria-hidden="true"] {
+      pointer-events: none;
+    }
+    .vignette-bg {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      background: var(--color-vignette, radial-gradient(ellipse at center, rgba(15,61,46,0.18) 0%, rgba(11,11,12,0.92) 100%));
+    }
+    @media (max-width: 600px) {
+      .splash-logo {
+        max-width: 90vw;
+        max-height: 35vh;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .splash {
+        transition: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    }
+    footer {
+      background: var(--color-header);
+      color: var(--color-gold);
+      padding: 1.2rem 2vw 1.2rem 2vw;
+      text-align: center;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+      border-top: 1px solid rgba(212,175,55,0.08);
+      margin-top: 3rem;
+    }
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .footer-link {
+      color: var(--color-gold);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .footer-link:hover, .footer-link:focus {
+      color: var(--color-highlight);
+      text-decoration: underline;
+      outline: none;
+    }
+    .footer-sep {
+      color: var(--color-muted);
+      font-size: 1.1em;
+    }
+    .muted {
+      color: var(--color-muted);
+      font-size: 1em;
+      font-style: italic;
+      letter-spacing: 0.01em;
+    }
+    @media (max-width: 600px) {
+      footer {
+        font-size: 0.97rem;
+        padding: 1rem 2vw;
+      }
+      .footer-content {
+        flex-direction: column;
+        gap: 0.2em;
+      }
+      .footer-sep {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash" id="splash" aria-label="Loading" aria-live="polite" aria-hidden="false">
+    <div class="vignette-bg"></div>
+    <img src="logo.png" alt="Beanstalk Auto Group logo" class="splash-logo" />
+  </div>
+  <footer>
+    <div class="footer-content">
+      <span class="muted">Site by Fee The Developer</span>
+      <span class="footer-sep">&nbsp;|&nbsp;</span>
+      <a href="mailto:contact@beanstalkauto.com" class="footer-link">Contact: contact@beanstalkauto.com</a>
+    </div>
+  </footer>
+  <script>
+    function hideSplash() {
+      const splash = document.getElementById('splash');
+      if (!splash) return;
+      setTimeout(() => {
+        splash.classList.add('splash--hide');
+        splash.addEventListener('transitionend', function handler() {
+          splash.setAttribute('aria-hidden', 'true');
+          splash.style.pointerEvents = 'none';
+          splash.removeEventListener('transitionend', handler);
+        });
+      }, 900);
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const splash = document.getElementById('splash');
+      splash.style.opacity = '0';
+      splash.setAttribute('aria-hidden', 'true');
+      splash.style.pointerEvents = 'none';
+    } else {
+      window.addEventListener('load', hideSplash);
+    }
+  </script>
+</body>
+</html>
