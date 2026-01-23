@@ -133,20 +133,30 @@
     function hideSplash() {
       const splash = document.getElementById('splash');
       if (!splash) return;
-      setTimeout(() => {
-        splash.classList.add('splash--hide');
-        splash.addEventListener('transitionend', function handler() {
-          splash.setAttribute('aria-hidden', 'true');
-          splash.style.pointerEvents = 'none';
-          splash.removeEventListener('transitionend', handler);
-        });
-      }, 900);
+        setTimeout(() => {
+          splash.classList.add('splash--hide');
+          let removed = false;
+          function cleanup() {
+            if (removed) return;
+            removed = true;
+            splash.setAttribute('aria-hidden', 'true');
+            splash.style.pointerEvents = 'none';
+            splash.remove();
+          }
+          splash.addEventListener('transitionend', function handler() {
+            cleanup();
+            splash.removeEventListener('transitionend', handler);
+          });
+          // Fallback: remove after 1.5s if transitionend doesn't fire
+          setTimeout(cleanup, 1500);
+        }, 900);
     }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const splash = document.getElementById('splash');
-      splash.style.opacity = '0';
-      splash.setAttribute('aria-hidden', 'true');
-      splash.style.pointerEvents = 'none';
+        splash.style.opacity = '0';
+        splash.setAttribute('aria-hidden', 'true');
+        splash.style.pointerEvents = 'none';
+        splash.remove();
     } else {
       window.addEventListener('load', hideSplash);
     }
